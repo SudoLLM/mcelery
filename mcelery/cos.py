@@ -20,10 +20,13 @@ def get_local_path(key: str) -> Path:
     return path
 
 
-def download_cos_file(key: str) -> Optional[Path]:
+def download_cos_file(key: str, dest: Path = None) -> Optional[Path]:
+    if dest:
+        dest.parent.mkdir(parents=True, exist_ok=True)
+    else:
+        dest = get_local_path(key)
     if key is None:
         return None
-    dest = get_local_path(key)
     if not dest.exists():
         cos_client.download_file(Bucket=cos_bucket, Key=key, DestFilePath=dest)
     return dest
