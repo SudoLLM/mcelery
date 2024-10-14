@@ -13,7 +13,7 @@ def register_infer_tasks():
         :param mode: 模式： 1 中文[同语言克隆] 2 中日英混合[跨语言克隆]
         :return: output_cos
         """
-        pass
+        raise NotImplementedError
 
     @celery_app.task(name="azure_infer", queue="azure_infer")
     def azure_infer_task(text: str, audio_profile: str, output_cos: str) -> str:
@@ -24,7 +24,7 @@ def register_infer_tasks():
         :param output_cos: 合成的音频文件 COS key
         :return: output_cos
         """
-        pass
+        raise NotImplementedError
 
     @celery_app.task(name="rvc_infer", queue="rvc_infer")
     def rvc_infer_task(audio_cos: str, index_cos: str, model_cos: str, pitch: int, output_cos: str) -> str:
@@ -37,7 +37,7 @@ def register_infer_tasks():
         :param output_cos: 转换后的音频 COS key
         :return: output_cos
         """
-        pass
+        raise NotImplementedError
 
     @celery_app.task(name="srt_infer", queue="srt_infer")
     def srt_infer_task(audio_cos: str, text: str, output_cos: str) -> str:
@@ -48,7 +48,7 @@ def register_infer_tasks():
         :param output_cos: 输出的字幕文件 COS key
         :return: output_cos
         """
-        pass
+        raise NotImplementedError
 
     @celery_app.task(name="talking_head_infer", queue="talking_head_infer")
     def talking_head_infer_task(audio_cos: str, speaker: str, output_cos: str) -> str:
@@ -59,6 +59,6 @@ def register_infer_tasks():
         :param output_cos: 输出的视频文件 COS key
         :return: output_cos
         """
-        pass
+        raise NotImplementedError
 
     return cosy_infer_task, azure_infer_task, rvc_infer_task, srt_infer_task, talking_head_infer_task

@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Callable
 
 from qcloud_cos import CosConfig, CosS3Client
 
@@ -14,23 +14,23 @@ cos_client = CosS3Client(cos_config)
 cos_local = Path("/cos")
 
 
-def get_local_path(key: str) -> Path:
-    path = cos_local / key
+def get_local_path(key: str, rewriter: Callable[[str], Path] = None) -> Path:
+    if rewriter is None:
+        path = cos_local / key
+    else:
+        path = rewriter(key)
+        if path is None:
+            path = cos_local / key
     path.parent.mkdir(parents=True, exist_ok=True)
     return path
 
 
-def download_cos_file(key: str, dest: Path = None) -> Optional[Path]:
-    if dest:
-        dest.parent.mkdir(parents=True, exist_ok=True)
-    else:
-        dest = get_local_path(key)
-    if key is None:
-        return None
-    if not dest.exists():
-        cos_client.download_file(Bucket=cos_bucket, Key=key, DestFilePath=dest)
-    return dest
+def download_cos_file(key: str, rewriter: Callable[[str], Path] = None) -> Optional[Path]:
+    path = get_local_path(key, rewriter)
+    if not path.exists():
+        cos_client.download_file(Bucket=cos_bucket, Key=key, DestFilePath=path)
+    return path
 
 
-def upload_cos_file(key: str):
-    cos_client.upload_file(Bucket=cos_bucket, Key=key, LocalFilePath=get_local_path(key))
+def upload_cos_file(key: str, rewriter: Callable[[str], Path] = None):
+    cos_client.upload_file(Bucket=cos_bucket, Key=key, LocalFilePath=get_local_path(key, rewriter))
